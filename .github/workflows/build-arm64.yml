@@ -25,7 +25,14 @@ jobs:
           mkdir -p dist/lib
           cp build/endless-sky dist/
           ldd build/endless-sky | grep "=> /" | awk '{print $3}' | while read lib; do
-            cp -v "$lib" dist/lib/
+            case "$(basename "$lib")" in
+              libc.so*|libm.so*|libpthread.so*|libdl.so*|librt.so*|ld-linux*|libgcc_s.so*|libstdc++.so*)
+                echo "Ignorando lib de sistema: $lib"
+                ;;
+              *)
+                cp -v "$lib" dist/lib/
+                ;;
+            esac
           done
       - name: Send artefact
         uses: actions/upload-artifact@v4
