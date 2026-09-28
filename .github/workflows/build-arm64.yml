@@ -12,16 +12,16 @@ jobs:
           sudo apt update
           sudo apt install -y build-essential cmake ninja-build \
             libsdl2-dev libpng-dev libjpeg-dev libglew-dev \
-            libopenal-dev uuid-dev libgles2-mesa-dev \
+            libopenal-dev uuid-dev libgles2-mesa-dev libegl1-mesa-dev \
             libavif-dev libflac++-dev libminizip-dev libmad0-dev
       - name: Configure
         run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DES_GLES=ON
       - name: Ver opções de GLES no CMakeLists
         run: grep -n -i "GLES\|OPENGL_ES\|find_package(OpenGL" CMakeLists.txt
-      #- name: Compile
-      #  run: cmake --build build -j$(nproc)
-      #- name: Send artefact
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #    name: endless-sky-arm64
-      #    path: build/endless-sky
+      - name: Compile
+        run: cmake --build build -j$(nproc)
+      - name: Send artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: endless-sky-arm64
+          path: build/endless-sky
