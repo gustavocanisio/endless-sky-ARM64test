@@ -16,12 +16,19 @@ jobs:
             libavif-dev libflac++-dev libminizip-dev libmad0-dev
       - name: Configure
         run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DES_GLES=ON
-      - name: Ver opções de GLES no CMakeLists
-        run: grep -n -i "GLES\|OPENGL_ES\|find_package(OpenGL" CMakeLists.txt
       - name: Compile
         run: cmake --build build -j$(nproc)
+      - name: Check linked libraries
+        run: readelf -d build/endless-sky | grep NEEDED
+      - name: Package libraries
+        run: |
+          mkdir -p dist/lib
+          cp build/endless-sky dist/
+          ldd build/endless-sky | grep "=> /" | awk '{print $3}' | while read lib; do
+            cp -v "$lib" dist/lib/
+          done
       - name: Send artefact
         uses: actions/upload-artifact@v4
         with:
           name: endless-sky-arm64
-          path: build/endless-sky
+          path: dist/
