@@ -11,7 +11,8 @@ jobs:
           sudo apt update
           sudo apt install -y build-essential cmake ninja-build \
             libsdl2-dev libpng-dev libjpeg-dev libglew-dev \
-            libopenal-dev uuid-dev libgles2-mesa-dev libavif-dev
+            libopenal-dev uuid-dev libgles2-mesa-dev libavif-dev \
+            libflac++-dev
       - name: Configure
         run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
       - name: Compile
