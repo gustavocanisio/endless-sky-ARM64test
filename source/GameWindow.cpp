@@ -33,8 +33,8 @@ using namespace std;
 
 namespace {
 	// The minimal screen resolution requirements.
-	constexpr int minWidth = 1024;
-	constexpr int minHeight = 768;
+	constexpr int minWidth = 640; //probably a bad idea to set this lower but oh well
+	constexpr int minHeight = 480;
 
 	SDL_Window *mainWindow = nullptr;
 	SDL_GLContext context = nullptr;
