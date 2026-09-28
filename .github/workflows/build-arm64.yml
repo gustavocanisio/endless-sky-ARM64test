@@ -1,0 +1,23 @@
+name: Build ARM64
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential cmake ninja-build \
+            libsdl2-dev libpng-dev libjpeg-dev libglew-dev \
+            libopenal-dev uuid-dev libgles2-mesa-dev
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+      - name: Compile
+        run: cmake --build build -j$(nproc)
+      - name: Send artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: endless-sky-arm64
+          path: build/endless-sky
