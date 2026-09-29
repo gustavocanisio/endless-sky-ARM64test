@@ -22,16 +22,18 @@ jobs:
         run: readelf -d build/endless-sky | grep NEEDED
       - name: Package libraries
         run: |
-          mkdir -p dist/lib
-          cp build/endless-sky dist/
-          ldd build/endless-sky | grep "=> /" | awk '{print $3}' | while read lib; do
+          mkdir -p dist/libs.aarch64
+          cp build/endless-sky dist/endless-sky.aarch64
+          ldd build/endless-sky | awk '/=> \//{print $3}' | while read lib; do
             case "$(basename "$lib")" in
-              libc.so*|libm.so*|libpthread.so*|libdl.so*|librt.so*|ld-linux*|libgcc_s.so*|libstdc++.so*)
-                echo "Ignorando lib de sistema: $lib"
-                ;;
+              # glibc: precisa vir do sistema
+              libc.so*|libm.so*|libpthread.so*|libdl.so*|librt.so*|libresolv*|libutil*|ld-linux*)
+                echo "Ignorando (glibc): $lib" ;;
+              # gráficos/SDL/áudio: devem vir do dispositivo
+              libSDL2*|libEGL*|libGLES*|libGL.so*|libGLX*|libGLdispatch*|libgbm*|libdrm*|libwayland*|libX*|libxcb*|libasound*|libpulse*|libmali*)
+                echo "Ignorando (sistema/driver): $lib" ;;
               *)
-                cp -v "$lib" dist/lib/
-                ;;
+                cp -v "$lib" dist/libs.aarch64/ ;;
             esac
           done
       - name: Send artefact
